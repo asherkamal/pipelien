@@ -1,0 +1,19 @@
+services:
+  pipeline:
+    build: .
+    env_file: .env
+    volumes:
+      - ./output_dataset:/app/output_dataset
+      - ./models:/app/models
+      - ./tools:/app/tools:ro
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    group_add:
+      - render
+      - video
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 20g

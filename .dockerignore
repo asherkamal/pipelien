@@ -1,0 +1,10 @@
+.env
+.git/
+__pycache__/
+*.pyc
+output_dataset/
+models/
+tools/
+*.jar
+.venv/
+venv/
