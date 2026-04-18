@@ -14,9 +14,10 @@ MAX_OUTPUT_BYTES = int(MAX_OUTPUT_GB * 1024 ** 3)
 HF_TOKEN         = os.environ.get("HF_TOKEN")
 HF_REPO_ID       = os.environ.get("HF_REPO_ID", "")
 
-BATCH_SIZE       = int(os.environ.get("BATCH_SIZE", 64))
-DOWNLOAD_WORKERS = int(os.environ.get("DOWNLOAD_WORKERS", 16))
-PROCESS_WORKERS  = int(os.environ.get("PROCESS_WORKERS", 6))
+BATCH_SIZE        = int(os.environ.get("BATCH_SIZE", 64))
+DOWNLOAD_WORKERS  = int(os.environ.get("DOWNLOAD_WORKERS", 16))
+PROCESS_WORKERS   = int(os.environ.get("PROCESS_WORKERS", 6))
+PREFETCH_BATCHES  = int(os.environ.get("PREFETCH_BATCHES", 3))
 
 SGCR_PROMPT = """\
 You are a Java code style expert. Rewrite the following Java code following the Google Java Style Guide:
