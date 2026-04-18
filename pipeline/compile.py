@@ -3,10 +3,13 @@ import os
 import re
 import subprocess
 import tempfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import boto3
 from smart_open import open as smart_open
+
+from pipeline.config import DOWNLOAD_WORKERS, PROCESS_WORKERS
 
 log = logging.getLogger(__name__)
 
@@ -38,6 +41,17 @@ def download_content(row: dict) -> str | None:
         return None
 
 
+def download_batch(rows: list[dict]) -> list[tuple[dict, str]]:
+    results = []
+    with ThreadPoolExecutor(max_workers=DOWNLOAD_WORKERS) as executor:
+        futures = {executor.submit(download_content, row): row for row in rows}
+        for future in as_completed(futures):
+            source = future.result()
+            if source is not None:
+                results.append((futures[future], source))
+    return results
+
+
 def compiles(source: str) -> bool:
     match    = _PUBLIC_TYPE_RE.search(source)
     filename = (match.group(1) if match else "Main") + ".java"
@@ -50,3 +64,13 @@ def compiles(source: str) -> bool:
             timeout=30,
         )
     return result.returncode == 0
+
+
+def compile_batch(items: list[tuple[dict, str]]) -> list[tuple[dict, str]]:
+    results = []
+    with ThreadPoolExecutor(max_workers=PROCESS_WORKERS) as executor:
+        futures = {executor.submit(compiles, source): (row, source) for row, source in items}
+        for future in as_completed(futures):
+            if future.result():
+                results.append(futures[future])
+    return results
