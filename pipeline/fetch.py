@@ -9,9 +9,10 @@ def stream_java_files():
     log.info("Loading bigcode/the-stack-v2-dedup (streaming, Java only)...")
     ds = load_dataset(
         "bigcode/the-stack-v2-dedup",
+        "Java",
         split="train",
         streaming=True,
         trust_remote_code=True,
         token=HF_TOKEN,
     )
-    return ds.filter(lambda row: row.get("language") == "Java")
+    return ds
