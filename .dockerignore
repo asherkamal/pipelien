@@ -4,7 +4,5 @@ __pycache__/
 *.pyc
 output_dataset/
 models/
-tools/
-*.jar
 .venv/
 venv/

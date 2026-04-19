@@ -5,7 +5,6 @@ services:
     volumes:
       - ./output_dataset:/app/output_dataset
       - ./models:/app/models
-      - ./tools:/app/tools:ro
     deploy:
       resources:
         reservations:

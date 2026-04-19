@@ -42,6 +42,8 @@ def _producer(java_stream, counts: dict, out_queue: queue.Queue, stop: threading
             linted = lint_batch(compiled)
             counts["linted"] += len(linted)
 
+            log.info("Batch counts — fetched: %d, compiled: %d, linted: %d",
+                     counts["fetched"], counts["compiled"], counts["linted"])
             if linted:
                 out_queue.put(linted)  # blocks when queue is full, backpressuring the producer
     finally:
