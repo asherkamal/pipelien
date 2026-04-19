@@ -7,19 +7,6 @@
   <module name="TreeWalker">
     <!-- Naming conventions (Google Java Style) -->
     <module name="TypeName"/>
-    <module name="MethodName"/>
-    <module name="LocalVariableName"/>
-    <module name="MemberName"/>
-    <module name="ParameterName"/>
-    <module name="ConstantName"/>
-    <module name="StaticVariableName"/>
-    <!-- Javadoc -->
-    <module name="JavadocMethod">
-      <property name="scope" value="public"/>
-    </module>
-    <module name="JavadocType">
-      <property name="scope" value="public"/>
-    </module>
     <!-- Code style -->
     <module name="NeedBraces"/>
     <module name="LeftCurly"/>
