@@ -6,12 +6,13 @@ services:
       - ./output_dataset:/app/output_dataset
       - ./models:/app/models
       - ./tools:/app/tools:ro
-    devices:
-      - /dev/kfd:/dev/kfd
-      - /dev/dri:/dev/dri
-    group_add:
-      - render
-      - video
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     security_opt:
       - no-new-privileges:true
     cap_drop:

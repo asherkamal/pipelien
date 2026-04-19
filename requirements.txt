@@ -4,6 +4,4 @@ smart_open[s3]
 huggingface_hub
 tqdm
 
-# llama-cpp-python must be installed with ROCm/HIP support for AMD GPU:
-# CMAKE_ARGS="-DGGML_HIPBLAS=on" pip install llama-cpp-python
 llama-cpp-python
