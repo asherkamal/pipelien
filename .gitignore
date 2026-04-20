@@ -19,9 +19,6 @@ site-packages/
 # Pipeline output
 output_dataset/
 
-# Checkstyle JAR (downloaded locally)
-*.jar
-
 # Jupyter
 .ipynb_checkpoints/
 

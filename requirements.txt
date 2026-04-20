@@ -3,5 +3,6 @@ boto3
 smart_open[s3]
 huggingface_hub
 tqdm
+python-dotenv
 
 llama-cpp-python

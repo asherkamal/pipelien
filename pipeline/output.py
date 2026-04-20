@@ -29,7 +29,10 @@ def finalize_and_push() -> None:
     ds.save_to_disk(final_dir)
     log.info("Final dataset: %d rows → %s", len(ds), final_dir)
 
-    if HF_REPO_ID:
-        log.info("Pushing to HuggingFace Hub: %s", HF_REPO_ID)
-        ds.push_to_hub(HF_REPO_ID, token=HF_TOKEN)
-        log.info("Published at https://huggingface.co/datasets/%s", HF_REPO_ID)
+    if not HF_REPO_ID:
+        log.warning("HF_REPO_ID is not set — skipping HuggingFace push.")
+        return
+
+    log.info("Pushing to HuggingFace Hub: %s", HF_REPO_ID)
+    ds.push_to_hub(HF_REPO_ID, token=HF_TOKEN)
+    log.info("Published at https://huggingface.co/datasets/%s", HF_REPO_ID)
