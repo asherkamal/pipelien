@@ -24,17 +24,30 @@ def load_model() -> Llama:
     return Llama(
         model_path=model_path,
         n_gpu_layers=-1,
-        n_ctx=8192,
+        n_ctx=16384,
         verbose=False,
     )
 
 
-def sgcr_rewrite(source: str, llm: Llama) -> str:
-    response = llm.create_chat_completion(
-        messages=[{"role": "user", "content": SGCR_PROMPT.format(code=source)}],
-        max_tokens=4096,
-        temperature=0,
-    )
-    generated = response["choices"][0]["message"]["content"]
+_MAX_SOURCE_CHARS = 48_000  # ~12k tokens — 16k ctx minus 4k output and ~120 token prompt overhead
+
+
+def sgcr_rewrite(source: str, llm: Llama) -> str | None:
+    if len(source) > _MAX_SOURCE_CHARS:
+        log.debug("Skipping file: %d chars exceeds limit", len(source))
+        return None
+    try:
+        response = llm.create_chat_completion(
+            messages=[{"role": "user", "content": SGCR_PROMPT.format(code=source)}],
+            max_tokens=12288,
+            temperature=0,
+        )
+    except ValueError as exc:
+        log.warning("LLM error, skipping file: %s", exc)
+        return None
+    choice = response["choices"][0]
+    if choice["finish_reason"] == "length":
+        log.warning("Output truncated (hit max_tokens) for file with %d chars — consider raising max_tokens", len(source))
+    generated = choice["message"]["content"]
     fence_match = re.search(r"```(?:java)?\n(.*?)```", generated, re.DOTALL)
     return fence_match.group(1).strip() if fence_match else generated.strip()

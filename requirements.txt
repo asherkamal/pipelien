@@ -4,5 +4,6 @@ smart_open[s3]
 huggingface_hub
 tqdm
 python-dotenv
+transformers
 
 llama-cpp-python

@@ -3,6 +3,7 @@ import logging
 import os
 
 from datasets import Dataset, concatenate_datasets, load_from_disk
+from transformers import AutoTokenizer
 
 from pipeline.config import OUTPUT_DIR, HF_REPO_ID, HF_TOKEN
 
@@ -28,6 +29,14 @@ def finalize_and_push() -> None:
     final_dir = os.path.join(OUTPUT_DIR, "final")
     ds.save_to_disk(final_dir)
     log.info("Final dataset: %d rows → %s", len(ds), final_dir)
+
+    log.info("Counting tokens with Qwen tokenizer...")
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-Coder-7B-Instruct", token=HF_TOKEN)
+    total_tokens = sum(
+        len(tokenizer.encode(r["content"])) + len(tokenizer.encode(r["rewritten_content"]))
+        for r in ds
+    )
+    log.info("Total tokens: %s (~%.1fM)", f"{total_tokens:,}", total_tokens / 1_000_000)
 
     if not HF_REPO_ID:
         log.warning("HF_REPO_ID is not set — skipping HuggingFace push.")

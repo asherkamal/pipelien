@@ -29,8 +29,9 @@ def _collect_batch(iterator, size: int) -> list:
 def _producer(java_stream, counts: dict, out_queue: queue.Queue, stop: threading.Event) -> None:
     """Background thread: fetch → download → compile → lint → enqueue batches for the LLM."""
     try:
+        java_iter = iter(java_stream)
         while not stop.is_set():
-            raw_batch = _collect_batch(java_stream, BATCH_SIZE)
+            raw_batch = _collect_batch(java_iter, BATCH_SIZE)
             if not raw_batch:
                 break
             counts["fetched"] += len(raw_batch)
@@ -76,7 +77,9 @@ def run_pipeline() -> None:
 
         batch_results = []
         for row, source in linted_batch:
-            rewritten    = sgcr_rewrite(source, llm)
+            rewritten = sgcr_rewrite(source, llm)
+            if rewritten is None:
+                continue
             row_bytes    = len(source.encode()) + len(rewritten.encode())
             total_bytes += row_bytes
             counts["rewritten"] += 1
